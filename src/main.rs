@@ -68,7 +68,7 @@ impl Cli {
         id_generator(filename.to_owned());
 
         
-        writeln!(&mut file, "{:?}", item_props).expect("Could not write to file");
+        writeln!(&mut file, "{:?}", serde_json::to_string(&item_props).ok().unwrap()).expect("Could not write to file");
     }
 
 
@@ -77,9 +77,10 @@ impl Cli {
 fn id_generator(filename:String){
 
     let file_op = File::open(filename).expect("Something went wrong opening file");
-    let mut read_buf = BufReader::new(file_op);
+    let mut read_buf = BufReader::new(&file_op);
     let mut file_contents = String::new();
     read_buf.read_to_string(&mut file_contents).expect("Something went wrong reading the file contents");
+
 
     let sp = file_contents.split("\n");
 
@@ -87,6 +88,18 @@ fn id_generator(filename:String){
     let final_len = collect.len().saturating_sub(2);
     collect.truncate(final_len);
     let last_item = collect.last();
+    let bind = last_item.expect("could not open").to_string();
+    let item:serde_json::Value = serde_json::from_str(&bind)
+        .expect("something went wrong");
+
+    dbg!(&item);
+    let id = item.get("id");
+    dbg!(id);
+
+
+
+
+
 
     // will continue from here folks
 }
