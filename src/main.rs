@@ -93,9 +93,10 @@ fn id_generator(filename:String){
         .expect("something went wrong");
 
     dbg!(&item);
-    let id = item.get("id");
-    dbg!(id);
+    let id = item.to_string();
 
+    let test_val = serde_json::from_str::<serde_json::Value>(&id).expect("something went wrong");
+    dbg!(test_val.get("id"));
 
 
 
